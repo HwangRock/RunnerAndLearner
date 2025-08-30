@@ -28,7 +28,7 @@ class Model:
         results = []
         payload = {}
         while True:
-            r = requests.post(self.api_url, headers=self.headers, json=payload)
+            r = requests.post(self.api_url, headers=self.headers, json=payload, timeout=10)
             r.raise_for_status()
             data = r.json()
             results.extend(data.get("results", []))
