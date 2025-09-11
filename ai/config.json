@@ -1,0 +1,10 @@
+{
+  "in_feats": 4,
+  "hidden": 64,
+  "out_feats": 3,
+  "num_layers": 1,
+  "dropout": 0.1,
+  "lookback": 60,
+  "scaler_path": "scaler.pkl",
+  "model_path": "model.pth"
+}

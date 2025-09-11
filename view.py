@@ -1,10 +1,13 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import controller
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 
 def main():
-    records = controller.Controller().preprocess()
+    ctrl = controller.Controller()
+    records = ctrl.preprocess()
     df = pd.DataFrame(records)
 
     dates = df["date"]
@@ -34,6 +37,9 @@ def main():
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.show()
+
+    predict = ctrl.predict_next()
+    print("next predicted data: ", predict)
 
 
 if __name__ == "__main__":

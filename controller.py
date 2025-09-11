@@ -1,6 +1,11 @@
 import re
 from typing import List, Optional, Dict, Any
+import joblib
 from model import Model
+import torch
+import numpy as np
+from ai.model_infer import load_config, build_model_from_config
+import os
 
 
 class Controller:
@@ -8,6 +13,40 @@ class Controller:
         self.model = Model()
         self.data: List[List[Optional[str]]] = self.model.create_model()
         self.cleaned: Optional[List[Dict[str, Any]]] = None
+
+        self.cfg = load_config("ai/config.json")
+        self.lookback = self.cfg["lookback"]
+        self.model_path = self.cfg["model_path"]
+        self.scaler_path = self.cfg["scaler_path"]
+
+        if os.path.exists(self.scaler_path):
+            try:
+                self.scaler = joblib.load(self.scaler_path)
+            except Exception as e:
+                print(f"[warn] failed to load scaler: {e}")
+                self.scaler = None
+        else:
+            print(f"[warn] scaler file not found: {self.scaler_path}")
+            self.scaler = None
+
+        if os.path.exists(self.model_path):
+            try:
+                self.rnn = build_model_from_config("ai/config.json")
+                ckpt = torch.load(self.model_path, map_location="cpu", weights_only=True)
+                if isinstance(ckpt, dict) and "model_state_dict" in ckpt:
+                    state = ckpt["model_state_dict"]
+                else:
+                    state = ckpt
+                missing, unexpected = self.rnn.load_state_dict(state, strict=False)
+                if missing or unexpected:
+                    print("[warn] missing:", missing, "unexpected:", unexpected)
+                self.rnn.eval()
+            except Exception as e:
+                print(f"[warn] failed to load model: {e}")
+                self.rnn = None
+        else:
+            print(f"[warn] model file not found: {self.model_path}")
+            self.rnn = None
 
     def km2m(self, km_str: Optional[str]) -> Optional[float]:
         if km_str is None:
@@ -68,3 +107,41 @@ class Controller:
 
         self.cleaned = cleaned
         return cleaned
+
+    def predict_next(self):
+        if self.rnn is None:
+            print("[warn] no model loaded, skip prediction")
+            return None
+
+        if not self.cleaned:
+            return None
+
+        X_all = np.array([
+            [
+                row["time_sec"] if row["time_sec"] is not None else 0.0,
+                row["velocity_mps"] if row["velocity_mps"] is not None else 0.0,
+                row["kcal"] if row["kcal"] is not None else 0.0,
+            ]
+            for row in self.cleaned
+        ], dtype=np.float32)
+
+        if len(X_all) < self.lookback:
+            return None
+
+        seq = X_all[-self.lookback:]
+
+        if self.scaler is not None:
+            seq_scaled = self.scaler.transform(seq)
+        else:
+            print("[warn] scaler is None, using raw values")
+            seq_scaled = seq
+
+        x = torch.from_numpy(seq_scaled).unsqueeze(0)
+        with torch.no_grad():
+            y = self.rnn(x).cpu().numpy().ravel()
+
+        return {
+            "pred_distance_km": float(y[0]),
+            "pred_time_sec": float(y[1]),
+            "pred_kcal": float(y[2]),
+        }
