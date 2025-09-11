@@ -113,11 +113,23 @@ class Controller:
             print("[warn] no model loaded, skip prediction")
             return None
 
-        X_all = np.asarray(self.cleaned, dtype=np.float32)
+        if not self.cleaned:
+            return None
+
+        X_all = np.array([
+            [
+                row["time_sec"] if row["time_sec"] is not None else 0.0,
+                row["velocity_mps"] if row["velocity_mps"] is not None else 0.0,
+                row["kcal"] if row["kcal"] is not None else 0.0,
+            ]
+            for row in self.cleaned
+        ], dtype=np.float32)
+
         if len(X_all) < self.lookback:
             return None
 
         seq = X_all[-self.lookback:]
+
         if self.scaler is not None:
             seq_scaled = self.scaler.transform(seq)
         else:

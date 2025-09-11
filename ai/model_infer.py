@@ -12,9 +12,9 @@ class GRUForecast(nn.Module):
             batch_first=True, dropout=(dropout if num_layers > 1 else 0.0)
         )
         self.head = nn.Sequential(
-            nn.Linear(hidden, 64), nn.ReLU(),
+            nn.Linear(hidden, hidden), nn.ReLU(),
             nn.Dropout(dropout),
-            nn.Linear(64, out_feats),
+            nn.Linear(hidden, out_feats),
         )
 
     def forward(self, x):  # x: (B,T,F)
