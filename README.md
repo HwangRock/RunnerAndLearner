@@ -35,10 +35,10 @@ Apple의 피트니스 앱은 운동 기록을 체계적으로 관리하고 주�
 ---
 
 ### 설계 - MVC 패턴
-![](./presentation/design.png)
+![](./presentation/design2.png)
 
 ###### 그래프 예시
-<img src="./presentation/example.png" width="900">
+<img src="./presentation/example2.png" width="900">
 
 ---
 
