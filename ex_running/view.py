@@ -1,10 +1,10 @@
-from ex_running.model import Model
+from ex_running import controller
 
 
 def main():
-    mdl = Model()
-    test = mdl.create_model()
-    print(test)
+    ctrl = controller.Controller()
+    records = ctrl.preprocess()
+    print(records)
 
 
 if __name__ == "__main__":
