@@ -1,7 +1,7 @@
 import re
 from typing import List, Optional, Dict, Any
 import joblib
-from model import Model
+from running.model import Model
 import torch
 import numpy as np
 from ai.model_infer import load_config, build_model_from_config
@@ -14,7 +14,7 @@ class Controller:
         self.data: List[List[Optional[str]]] = self.model.create_model()
         self.cleaned: Optional[List[Dict[str, Any]]] = None
 
-        self.cfg = load_config("ai/config.json")
+        self.cfg = load_config("../ai/config.json")
         self.lookback = self.cfg["lookback"]
         self.model_path = self.cfg["model_path"]
         self.scaler_path = self.cfg["scaler_path"]
@@ -31,7 +31,7 @@ class Controller:
 
         if os.path.exists(self.model_path):
             try:
-                self.rnn = build_model_from_config("ai/config.json")
+                self.rnn = build_model_from_config("../ai/config.json")
                 ckpt = torch.load(self.model_path, map_location="cpu", weights_only=True)
                 if isinstance(ckpt, dict) and "model_state_dict" in ckpt:
                     state = ckpt["model_state_dict"]
