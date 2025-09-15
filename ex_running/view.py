@@ -19,11 +19,25 @@ def main():
     axes[0].set_title("Workout Time by Date")
     axes[0].set_xlabel("Date")
     axes[0].set_ylabel("Time (sec)")
+    for x, y, label in zip(dates, df["time_sec"], df["name"]):
+        axes[0].annotate(label, (x, y),
+                         textcoords="offset points",
+                         xytext=(0, 5),
+                         ha='center')
 
     axes[1].plot(dates, df["kcal"], marker="o", color="black")
     axes[1].set_title("Calories by Date")
     axes[1].set_xlabel("Date")
     axes[1].set_ylabel("kcal")
+    axes[1].plot(dates, df["kcal"], marker="o", color="black")
+    axes[1].set_title("Calories by Date")
+    axes[1].set_xlabel("Date")
+    axes[1].set_ylabel("kcal")
+    for x, y, label in zip(dates, df["kcal"], df["name"]):
+        axes[1].annotate(label, (x, y),
+                         textcoords="offset points",
+                         xytext=(0, 5),
+                         ha='center')
 
     plt.xticks(rotation=45)
     plt.tight_layout()
