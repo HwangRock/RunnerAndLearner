@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-import controller
+from running import controller
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
