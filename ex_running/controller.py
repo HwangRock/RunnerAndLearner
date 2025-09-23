@@ -5,7 +5,7 @@ import torch
 import numpy as np
 from ai.model_infer import load_config, build_model_from_config
 import os
-from ex_running.model import Model
+from model.ex_running_model import Model
 
 
 class Controller:

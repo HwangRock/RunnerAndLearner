@@ -1,7 +1,7 @@
 import re
 from typing import List, Optional, Dict, Any
 import joblib
-from running.model import Model
+from model.running_model import Model
 import torch
 import numpy as np
 from ai.model_infer import load_config, build_model_from_config
