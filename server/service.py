@@ -1,10 +1,19 @@
-from model.running_model import *
+from model.running_model import Model
+from dto.runnning_dto import RunningDto
+import json
 
 
-def main():
-    model = Model()
-    running_data = model.create_model()
+class RunningService:
 
+    def __init__(self):
+        self.model = Model()
+        self.running_data = self.model.create_model()
 
-if __name__ == "__main__":
-    main()
+    def preprocess_data(self):
+        response_data = []
+        for i in self.running_data:
+            running = RunningDto(i[0], i[1], i[2], i[3])
+            data = json.dumps(running.__dict__)
+            response_data.append(data)
+
+        return response_data
