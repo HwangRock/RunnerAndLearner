@@ -1,5 +1,5 @@
 from model.running_model import Model
-from dto.runnning_dto import RunningDto
+from server.dto.runnning_dto import RunningDto
 import json
 
 
@@ -13,7 +13,6 @@ class RunningService:
         response_data = []
         for i in self.running_data:
             running = RunningDto(i[0], i[1], i[2], i[3])
-            data = json.dumps(running.__dict__)
-            response_data.append(data)
+            response_data.append(running)
 
         return response_data
