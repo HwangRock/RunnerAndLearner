@@ -1,13 +1,12 @@
-from model.running_model import Model
+from model.running_model import RunningModel
 from server.dto.runnning_dto import RunningDto
-import json
 
 
 class RunningService:
 
     def __init__(self):
-        self.model = Model()
-        self.running_data = self.model.create_model()
+        self.running_model = RunningModel()
+        self.running_data = self.running_model.create_model()
 
     def preprocess_data(self):
         response_data = []

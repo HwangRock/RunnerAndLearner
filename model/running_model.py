@@ -3,7 +3,7 @@ import requests
 from dotenv import load_dotenv
 
 
-class Model:
+class RunningModel:
     def __init__(self):
         load_dotenv()
         self.token = os.getenv("NOTION_TOKEN")
