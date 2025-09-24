@@ -7,4 +7,9 @@ service = RunningService()
 
 @router.get("/running")
 def get_running():
-    return service.preprocess_data()
+    return service.preprocess_running_data()
+
+
+@router.get("/exrunning")
+def get_ex_running():
+    return service.preprocess_ex_running_data()
