@@ -1,4 +1,4 @@
-from model.running_repository import RunningModel
+from model.running_repository import RunningRepository
 from model.ex_running_repository import ExRunningModel
 from server.dto.runnning_dto import RunningDto
 from server.dto.ex_running_dto import ExRunningDto
@@ -7,7 +7,7 @@ from server.dto.ex_running_dto import ExRunningDto
 class RunningService:
 
     def __init__(self):
-        self.running_model = RunningModel()
+        self.running_model = RunningRepository()
         self.ex_running_model = ExRunningModel()
         self.running_data = self.running_model.create_model()
         self.ex_running_data = self.ex_running_model.create_model()

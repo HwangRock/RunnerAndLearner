@@ -1,7 +1,7 @@
 import re
 from typing import List, Optional, Dict, Any
 import joblib
-from model.running_repository import RunningModel
+from model.running_repository import RunningRepository
 import torch
 import numpy as np
 from ai.model_infer import load_config, build_model_from_config
@@ -10,7 +10,7 @@ import os
 
 class Controller:
     def __init__(self):
-        self.model = RunningModel()
+        self.model = RunningRepository()
         self.data: List[List[Optional[str]]] = self.model.create_model()
         self.cleaned: Optional[List[Dict[str, Any]]] = None
 
