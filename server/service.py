@@ -1,4 +1,4 @@
-from model.running_model import RunningModel
+from model.running_repository import RunningModel
 from model.ex_running_model import ExRunningModel
 from server.dto.runnning_dto import RunningDto
 from server.dto.ex_running_dto import ExRunningDto
@@ -15,7 +15,7 @@ class RunningService:
     def preprocess_running_data(self):
         response_data = []
         for i in self.running_data:
-            running = RunningDto(i[0], i[1], i[2], i[3])
+            running = RunningDto(i.date, i.time, i.distance, i.kcal)
             response_data.append(running)
 
         return response_data

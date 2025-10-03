@@ -1,6 +1,7 @@
 import os
 import requests
 from dotenv import load_dotenv
+from model.runningEntry import RunningEntry
 
 
 class RunningModel:
@@ -44,12 +45,7 @@ class RunningModel:
         for row in rows:
             props = row["properties"]
 
-            date = self.extract_text(props.get("date"))
-            time = self.extract_text(props.get("time"))
-            distance = self.extract_text(props.get("distance"))
-            kcal = self.extract_text(props.get("kcal"))
-
-            first = [date, time, distance, kcal]
-            data.append(first)
+            entry = RunningEntry.change(props, extractor=self.extract_text)
+            data.append(entry)
 
         return list(reversed(data))

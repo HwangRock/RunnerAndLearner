@@ -1,7 +1,7 @@
 import re
 from typing import List, Optional, Dict, Any
 import joblib
-from model.running_model import RunningModel
+from model.running_repository import RunningModel
 import torch
 import numpy as np
 from ai.model_infer import load_config, build_model_from_config
@@ -82,7 +82,10 @@ class Controller:
     def preprocess(self) -> List[Dict[str, Any]]:
         cleaned: List[Dict[str, Any]] = []
         for row in self.data:
-            date, time_str, distance_km_str, kcal_str = (row + [None, None, None, None])[:4]
+            date = getattr(row, "date", None)
+            time_str = getattr(row, "time", None)
+            distance_km_str = getattr(row, "distance", None)
+            kcal_str = getattr(row, "kcal", None)
 
             time_sec = self.preprocess_time(time_str)
             try:
