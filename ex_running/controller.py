@@ -5,12 +5,12 @@ import torch
 import numpy as np
 from ai.model_infer import load_config, build_model_from_config
 import os
-from model.ex_running_repository import ExRunningModel
+from model.ex_running_repository import ExRunningRepository
 
 
 class Controller:
     def __init__(self):
-        self.model = ExRunningModel()
+        self.model = ExRunningRepository()
         self.data: List[List[Optional[str]]] = self.model.create_model()
         self.cleaned: Optional[List[Dict[str, Any]]] = None
 

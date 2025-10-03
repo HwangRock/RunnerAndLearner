@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from model.exRunningEntry import ExRunningEntry
 
 
-class ExRunningModel:
+class ExRunningRepository:
     def __init__(self):
         load_dotenv()
         self.token = os.getenv("NOTION_TOKEN")
