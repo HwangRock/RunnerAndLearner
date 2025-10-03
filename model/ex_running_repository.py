@@ -1,6 +1,7 @@
 import os
 import requests
 from dotenv import load_dotenv
+from model.exRunningEntry import ExRunningEntry
 
 
 class ExRunningModel:
@@ -44,12 +45,7 @@ class ExRunningModel:
         for row in rows:
             props = row["properties"]
 
-            date = self.extract_text(props.get("date"))
-            name = self.extract_text(props.get("name"))
-            time = self.extract_text(props.get("time"))
-            kcal = self.extract_text(props.get("kcal"))
-
-            first = [date, name, time, kcal]
-            data.append(first)
+            entry = ExRunningEntry.change(props, extractor=self.extract_text)
+            data.append(entry)
 
         return list(reversed(data))
