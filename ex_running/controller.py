@@ -5,12 +5,12 @@ import torch
 import numpy as np
 from ai.model_infer import load_config, build_model_from_config
 import os
-from model.ex_running_model import ExRunningModel
+from model.ex_running_repository import ExRunningRepository
 
 
 class Controller:
     def __init__(self):
-        self.model = ExRunningModel()
+        self.model = ExRunningRepository()
         self.data: List[List[Optional[str]]] = self.model.create_model()
         self.cleaned: Optional[List[Dict[str, Any]]] = None
 
@@ -67,7 +67,10 @@ class Controller:
     def preprocess(self) -> List[Dict[str, Any]]:
         cleaned: List[Dict[str, Any]] = []
         for row in self.data:
-            date, name, time_str, kcal_str = (row + [None, None, None, None])[:4]
+            date = getattr(row, "date", None)
+            name = getattr(row, "name", None)
+            time_str = getattr(row, "time", None)
+            kcal_str = getattr(row, "kcal", None)
 
             time_sec = self.preprocess_time(time_str)
 

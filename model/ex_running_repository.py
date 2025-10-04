@@ -1,13 +1,14 @@
 import os
 import requests
 from dotenv import load_dotenv
+from model.exRunningEntry import ExRunningEntry
 
 
-class RunningModel:
+class ExRunningRepository:
     def __init__(self):
         load_dotenv()
         self.token = os.getenv("NOTION_TOKEN")
-        self.database_id = os.getenv("NOTION_DATABASE_ID")
+        self.database_id = os.getenv("NOTION_EXDB_ID")
         self.api_url = f"https://api.notion.com/v1/databases/{self.database_id}/query"
         self.headers = {
             "Authorization": f"Bearer {self.token}",
@@ -44,12 +45,7 @@ class RunningModel:
         for row in rows:
             props = row["properties"]
 
-            date = self.extract_text(props.get("date"))
-            time = self.extract_text(props.get("time"))
-            distance = self.extract_text(props.get("distance"))
-            kcal = self.extract_text(props.get("kcal"))
-
-            first = [date, time, distance, kcal]
-            data.append(first)
+            entry = ExRunningEntry.change(props, extractor=self.extract_text)
+            data.append(entry)
 
         return list(reversed(data))
