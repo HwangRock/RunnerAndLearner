@@ -1,2 +1,7 @@
 .env
 .idea
+
+# pycache 관련
+__pycache__/
+*.py[cod]
+*$py.class
