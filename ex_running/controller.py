@@ -87,6 +87,7 @@ class Controller:
             })
 
         self.cleaned = cleaned
+        cleaned.reverse()
         return cleaned
 
     def predict_next(self):

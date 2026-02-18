@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from running import controller
 import os
+
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 
@@ -11,30 +12,31 @@ def main():
     df = pd.DataFrame(records)
 
     dates = df["date"]
+    x = range(len(dates))
 
     fig, axes = plt.subplots(2, 2, figsize=(12, 8))
 
-    axes[0, 0].plot(dates, df["time_sec"], marker="o")
+    axes[0, 0].plot(x, df["time_sec"], marker="o")
     axes[0, 0].set_title("Workout Time by Date")
-    axes[0, 0].set_xlabel("Date")
     axes[0, 0].set_ylabel("Time (sec)")
 
-    axes[0, 1].plot(dates, df["velocity_mps"], marker="o", color="red")
+    axes[0, 1].plot(x, df["velocity_mps"], marker="o", color="red")
     axes[0, 1].set_title("Velocity by Date")
-    axes[0, 1].set_xlabel("Date")
     axes[0, 1].set_ylabel("Velocity (m/s)")
 
-    axes[1, 0].plot(dates, df["distance_km"], marker="o", color="green")
+    axes[1, 0].plot(x, df["distance_km"], marker="o", color="green")
     axes[1, 0].set_title("Distance by Date")
-    axes[1, 0].set_xlabel("Date")
     axes[1, 0].set_ylabel("Distance (km)")
 
-    axes[1, 1].plot(dates, df["kcal"], marker="o", color="black")
+    axes[1, 1].plot(x, df["kcal"], marker="o", color="black")
     axes[1, 1].set_title("Calories by Date")
-    axes[1, 1].set_xlabel("Date")
     axes[1, 1].set_ylabel("kcal")
 
-    plt.xticks(rotation=45)
+    for ax in axes.flat:
+        ax.set_xlabel("Date")
+        ax.set_xticks(x)
+        ax.set_xticklabels(dates, rotation=45)
+
     plt.tight_layout()
     plt.show()
 
