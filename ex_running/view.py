@@ -12,34 +12,35 @@ def main():
     df = pd.DataFrame(records)
 
     dates = df["date"]
+    rx = range(len(dates))
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 4))
 
-    axes[0].plot(dates, df["time_sec"], marker="o")
+    axes[0].plot(rx, df["time_sec"], marker="o")
     axes[0].set_title("Workout Time by Date")
-    axes[0].set_xlabel("Date")
     axes[0].set_ylabel("Time (sec)")
-    for x, y, label in zip(dates, df["time_sec"], df["name"]):
-        axes[0].annotate(label, (x, y),
+
+    for i, y, label in zip(rx, df["time_sec"], df["name"]):
+        axes[0].annotate(label, (i, y),
                          textcoords="offset points",
                          xytext=(0, 5),
                          ha='center')
 
-    axes[1].plot(dates, df["kcal"], marker="o", color="black")
+    axes[1].plot(rx, df["kcal"], marker="o", color="black")
     axes[1].set_title("Calories by Date")
-    axes[1].set_xlabel("Date")
     axes[1].set_ylabel("kcal")
-    axes[1].plot(dates, df["kcal"], marker="o", color="black")
-    axes[1].set_title("Calories by Date")
-    axes[1].set_xlabel("Date")
-    axes[1].set_ylabel("kcal")
-    for x, y, label in zip(dates, df["kcal"], df["name"]):
-        axes[1].annotate(label, (x, y),
+
+    for i, y, label in zip(rx, df["kcal"], df["name"]):
+        axes[1].annotate(label, (i, y),
                          textcoords="offset points",
                          xytext=(0, 5),
                          ha='center')
 
-    plt.xticks(rotation=45)
+    for ax in axes:
+        ax.set_xlabel("Date")
+        ax.set_xticks(rx)
+        ax.set_xticklabels(dates, rotation=45)
+
     plt.tight_layout()
     plt.show()
 

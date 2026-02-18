@@ -66,7 +66,10 @@ class Controller:
 
     def preprocess(self) -> List[Dict[str, Any]]:
         cleaned: List[Dict[str, Any]] = []
+        seq = 0;
         for row in self.data:
+            if seq == 11:
+                break
             date = getattr(row, "date", None)
             name = getattr(row, "name", None)
             time_str = getattr(row, "time", None)
@@ -85,8 +88,10 @@ class Controller:
                 "time_sec": time_sec,
                 "kcal": kcal,
             })
+            seq += 1
 
         self.cleaned = cleaned
+        cleaned.reverse()
         return cleaned
 
     def predict_next(self):
