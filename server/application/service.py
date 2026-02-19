@@ -1,16 +1,16 @@
-from model.running_repository import RunningRepository
-from model.ex_running_repository import ExRunningRepository
-from server.dto.runnning_dto import RunningDto
-from server.dto.ex_running_dto import ExRunningDto
-from typing import List, Optional, Dict, Any
+from server.infrastructure.interface.RunningNotionClient import RunningNotionClient
+from server.infrastructure.interface.CyclingNotionClient import CyclingNotionClient
+from server.presentation.dto.runnning_dto import RunningDto
+from server.presentation.dto.ex_running_dto import ExRunningDto
+from typing import Optional
 import re
 
 
 class RunningService:
 
     def __init__(self):
-        self.running_model = RunningRepository()
-        self.ex_running_model = ExRunningRepository()
+        self.running_model = RunningNotionClient()
+        self.ex_running_model = CyclingNotionClient()
         self.running_data = self.running_model.create_model()
         self.ex_running_data = self.ex_running_model.create_model()
 

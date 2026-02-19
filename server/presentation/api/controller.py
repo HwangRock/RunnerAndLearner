@@ -1,4 +1,4 @@
-from server.service import RunningService
+from server.application.service import RunningService
 from fastapi import APIRouter
 
 router = APIRouter()

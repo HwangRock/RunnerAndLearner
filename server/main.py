@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from server.controller import router
+from server.presentation.api.controller import router
 
 # 서버 실행 명령어
-# uvicorn server_main:app --reload
+# uvicorn server.main:app --reload
 
 app = FastAPI()
 app.include_router(router)

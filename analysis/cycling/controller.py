@@ -1,20 +1,20 @@
 import re
 from typing import List, Optional, Dict, Any
 import joblib
-from model.running_repository import RunningRepository
 import torch
 import numpy as np
 from ai.model_infer import load_config, build_model_from_config
 import os
+from analysis.model.ex_running_repository import ExRunningRepository
 
 
 class Controller:
     def __init__(self):
-        self.model = RunningRepository()
+        self.model = ExRunningRepository()
         self.data: List[List[Optional[str]]] = self.model.create_model()
         self.cleaned: Optional[List[Dict[str, Any]]] = None
 
-        self.cfg = load_config("../ai/config.json")
+        self.cfg = load_config("../../ai/config.json")
         self.lookback = self.cfg["lookback"]
         self.model_path = self.cfg["model_path"]
         self.scaler_path = self.cfg["scaler_path"]
@@ -31,7 +31,7 @@ class Controller:
 
         if os.path.exists(self.model_path):
             try:
-                self.rnn = build_model_from_config("../ai/config.json")
+                self.rnn = build_model_from_config("../../ai/config.json")
                 ckpt = torch.load(self.model_path, map_location="cpu", weights_only=True)
                 if isinstance(ckpt, dict) and "model_state_dict" in ckpt:
                     state = ckpt["model_state_dict"]
@@ -47,14 +47,6 @@ class Controller:
         else:
             print(f"[warn] model file not found: {self.model_path}")
             self.rnn = None
-
-    def km2m(self, km_str: Optional[str]) -> Optional[float]:
-        if km_str is None:
-            return None
-        try:
-            return float(km_str) * 1000.0
-        except ValueError:
-            return None
 
     def preprocess_time(self, t: Optional[str]) -> Optional[int]:
         if not t:
@@ -72,44 +64,29 @@ class Controller:
         ss = int(m.group('s')) if m.group('s') else 0
         return h * 3600 + mm * 60 + ss
 
-    def calculate_velocity(self, distance_km_str: Optional[str], time_str: Optional[str]) -> Optional[float]:
-        sec = self.preprocess_time(time_str)
-        meters = self.km2m(distance_km_str)
-        if sec and sec > 0 and meters is not None:
-            return round(meters / sec, 3)
-        return None
-
     def preprocess(self) -> List[Dict[str, Any]]:
         cleaned: List[Dict[str, Any]] = []
         seq = 0;
         for row in self.data:
             if seq == 11:
                 break
-
             date = getattr(row, "date", None)
+            name = getattr(row, "name", None)
             time_str = getattr(row, "time", None)
-            distance_km_str = getattr(row, "distance", None)
             kcal_str = getattr(row, "kcal", None)
 
             time_sec = self.preprocess_time(time_str)
-            try:
-                distance_km = float(distance_km_str) if distance_km_str is not None else None
-            except ValueError:
-                distance_km = None
 
             try:
                 kcal = int(kcal_str) if kcal_str is not None else None
             except ValueError:
                 kcal = None
 
-            velocity_mps = self.calculate_velocity(distance_km_str, time_str)
-
             cleaned.append({
                 "date": date,
+                "name": name,
                 "time_sec": time_sec,
-                "distance_km": distance_km,
                 "kcal": kcal,
-                "velocity_mps": velocity_mps,
             })
             seq += 1
 
@@ -128,7 +105,6 @@ class Controller:
         X_all = np.array([
             [
                 row["time_sec"] if row["time_sec"] is not None else 0.0,
-                row["velocity_mps"] if row["velocity_mps"] is not None else 0.0,
                 row["kcal"] if row["kcal"] is not None else 0.0,
             ]
             for row in self.cleaned
@@ -150,7 +126,6 @@ class Controller:
             y = self.rnn(x).cpu().numpy().ravel()
 
         return {
-            "pred_distance_km": float(y[0]),
             "pred_time_sec": float(y[1]),
             "pred_kcal": float(y[2]),
         }

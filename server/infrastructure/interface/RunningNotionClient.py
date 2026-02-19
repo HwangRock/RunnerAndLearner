@@ -1,14 +1,13 @@
 import os
 import requests
 from dotenv import load_dotenv
-from model.exRunningEntry import ExRunningEntry
+from server.infrastructure.domain.RunningEntry import RunningEntry
 
-
-class ExRunningRepository:
+class RunningNotionClient:
     def __init__(self):
         load_dotenv()
         self.token = os.getenv("NOTION_TOKEN")
-        self.database_id = os.getenv("NOTION_EXDB_ID")
+        self.database_id = os.getenv("NOTION_DATABASE_ID")
         self.api_url = f"https://api.notion.com/v1/databases/{self.database_id}/query"
         self.headers = {
             "Authorization": f"Bearer {self.token}",
@@ -45,7 +44,7 @@ class ExRunningRepository:
         for row in rows:
             props = row["properties"]
 
-            entry = ExRunningEntry.change(props, extractor=self.extract_text)
+            entry = RunningEntry.change(props, extractor=self.extract_text)
             data.append(entry)
 
         return list(reversed(data))

@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-from ex_running import controller
+from analysis.cycling import controller
 import os
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
