@@ -1,7 +1,10 @@
+import datetime
+
 from server.infrastructure.interface.RunningNotionClient import RunningNotionClient
 from server.infrastructure.interface.CyclingNotionClient import CyclingNotionClient
-from server.presentation.dto.runnning_dto import RunningDto
-from server.presentation.dto.ex_running_dto import ExRunningDto
+from server.infrastructure.interface.WeatherClient import WeatherClient
+from server.presentation.dto.RunningResponse import RunningResponse
+from server.presentation.dto.CyclingResponse import CyclingResponse
 from typing import Optional
 import re
 
@@ -13,26 +16,43 @@ class RunningService:
         self.ex_running_model = CyclingNotionClient()
         self.running_data = self.running_model.create_model()
         self.ex_running_data = self.ex_running_model.create_model()
+        self.weather_data = WeatherClient()
+
+    def preprocess_response_data(self):
+        return {
+            "running": self.preprocess_running_data(),
+            "cycling": self.preprocess_cycling_data(),
+            "weather": self.preprocess_weather_data()
+        }
 
     def preprocess_running_data(self):
-        response_data = []
+        response_data = {}
         for i in self.running_data:
             sec_time = self.preprocess_time(i.time)
             m_distance = self.km2m(i.distance)
             kcal = int(i.kcal)
-            running = RunningDto(i.date, sec_time, m_distance, kcal)
-            response_data.append(running)
 
-        response_data.reverse()
+            running = RunningResponse(sec_time, m_distance, kcal)
+            response_data[i.date]=running.to_dict()
+
         return response_data
 
-    def preprocess_ex_running_data(self):
-        response_data = []
+    def preprocess_cycling_data(self):
+        response_data = {}
         for i in self.ex_running_data:
             sec_time = self.preprocess_time(i.time)
             kcal = int(i.kcal)
-            ex_running = ExRunningDto(i.date, i.name, sec_time, kcal)
-            response_data.append(ex_running)
+
+            cycling = CyclingResponse(sec_time, kcal)
+            response_data[i.date] = cycling.to_dict()
+
+        return response_data
+
+    def preprocess_weather_data(self):
+        current_datetime = datetime.datetime.now()
+        base_date = current_datetime.strftime("%Y%m%d")
+        base_time = current_datetime.strftime("%H00")
+        response_data = self.weather_data.get_weather_data(base_date, base_time, 55, 127)
 
         return response_data
 
